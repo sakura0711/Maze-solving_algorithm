@@ -15,6 +15,7 @@ public:
 	int** ptrMaze;
 	
 	void Set_size(int size) { this->size = size; }
+	void Set_probability(int probability) {this->probability= probability;}
 
 	void CreateMaze2D() {
 		ptrMaze = new int* [size];
@@ -24,13 +25,26 @@ public:
 	}
 
 	void ProduceRandomMaze() {
-		for (int i = 0; i < size; i++) {
-			ptrMaze[i][0] = 1;  // 開頭
-			ptrMaze[i][size - 1] = 1;
-			for (int j = 0; j < size; j++) {
-				if (i == 0) { ptrMaze[0][j] = 1; } // 開頭
-				if (i == size - 1) { ptrMaze[size - 1][j] = 1; } //結尾
-				if (ptrMaze[i][j] != 1) { ptrMaze[i][j] = 0; }
+
+		probability = probability / 10;
+
+		for (int i = 0; i < size; i++) 
+		{
+			ptrMaze[i][0] = 1;				 // Wall (Left)
+			ptrMaze[i][size - 1] = 1;		 // Wall (Right)
+			ptrMaze[1][1] = 8;				 // START 
+			ptrMaze[size - 2][size - 2] = 8; // END
+
+			for (int j = 0; j < size; j++) 
+			{
+				int randSeed = rand() % 10;
+				if (i == 0) { ptrMaze[0][j] = 1; }				 // Wall (Up)
+				if (i == size - 1) { ptrMaze[size - 1][j] = 1; } //Wall (Down)
+				if (ptrMaze[i][j] != 1) 
+				{ 
+					if (randSeed < probability) { ptrMaze[i][j] = 1; }
+					else { ptrMaze[i][j] = 0; }
+				}
 			}
 		}
 	}
@@ -51,11 +65,12 @@ int main()
 {
 	srand(time(NULL));
 	int size;
-
+	int probability;
 	Maze maze;
 
-	cin >> size;
+	cin >> size >> probability;
 	maze.Set_size(size);
+	maze.Set_probability(probability);
 	maze.CreateMaze2D();
 	maze.ProduceRandomMaze();
 	maze.PrintMaze();
