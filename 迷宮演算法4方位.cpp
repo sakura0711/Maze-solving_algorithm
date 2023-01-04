@@ -31,17 +31,18 @@ public:
 
 		probability = probability / 10;
 
-		for (int i = 0; i < size; i++) 
+		for (int i = 0; i < size; i++)
 		{
 			ptrMaze[i][0] = 1;				 // Wall (Left)
 			ptrMaze[i][size - 1] = 1;		 // Wall (Right)
 
-			for (int j = 0; j < size; j++) 
+			for (int j = 0; j < size; j++)
 			{
+				
 				if (i == 0) { ptrMaze[0][j] = 1; }				 // Wall (Up)
-				else if (i == size - 1) { ptrMaze[size - 1][j] = 1; } //Wall (Down)
-				else
-				{ 
+				if (i == size - 1) { ptrMaze[size - 1][j] = 1; } //Wall (Down)
+				if (ptrMaze[i][j] != 1 && i != 0 && i != size - 1)
+				{
 					int randSeed = rand() % 10;
 					if (randSeed < probability) { ptrMaze[i][j] = 1; }
 					else { ptrMaze[i][j] = 0; }
@@ -97,6 +98,74 @@ public:
 		return end;
 	}
 
+	int visit(int i, int j) {
+		if (!ptrMaze[i][i]) {
+			ptrMaze[i][i] = 1;
+			if (!ptrMaze[j][j] &&
+				!(visit(i,  j + 1) ||
+					visit(i + 1, j) ||
+					visit(i, j - 1) ||
+					visit(i - 1, j ))) {
+				ptrMaze[i][j] = 0;
+			}
+		}
+		return ptrMaze[i][j];
+
+	}
+
+	int VistMaze_8directions(int i, int j)
+	{
+		int end = 0;
+
+		//假設能夠走通
+		ptrMaze[i][j] = 2;
+		//如果到達重點則將end置為0表示迷宮已經走結束
+		if (i == size - 2 && j == size - 2) {
+			end = 1;
+			return end;
+		}
+		//如果迷宮沒有走結束則將搜尋所在位置的右、下、左、上四個方向是否能夠走通
+		if (end != 1 && j + 1 <= size - 1 && ptrMaze[i][j + 1] == 0) {		//右
+			if (VistMaze_8directions(i, j + 1) == 1)
+				return 1;
+		}
+		if (end != 1 && (j + 1 <= size - 1 && i + 1 <= size - 1) && ptrMaze[i + 1][j + 1] == 0) {		//右下
+			if (VistMaze_8directions(i + 1 , j + 1) == 1)
+				return 1;
+		}
+		if (end != 1 && i + 1 <= size - 1 && ptrMaze[i + 1][j] == 0) {		//下
+			if (VistMaze_8directions(i + 1, j) == 1)
+				return 1;
+		}
+		if (end != 1 && (i + 1 <= size - 1 && j - 1 >= 1) && ptrMaze[i + 1][j - 1] == 0) {		//左下
+			if (VistMaze_8directions(i + 1, j - 1) == 1)
+				return 1;
+		}
+		if (end != 1 && j - 1 >= 1 && ptrMaze[i][j - 1] == 0) {	//左
+			if (VistMaze_8directions(i, j - 1) == 1)
+				return 1;
+		}
+		if (end != 1 && (i - 1 >= 1 && j - 1 >= 1) && ptrMaze[i - 1][j - 1] == 0) {	//左上
+			if (VistMaze_8directions(i - 1, j - 1) == 1)
+				return 1;
+		}
+		if (end != 1 && i - 1 >= 1 && ptrMaze[i - 1][j] == 0) {	//上
+			if (VistMaze_8directions(i - 1, j) == 1)
+				return 1;
+		}
+		if (end != 1 && (i - 1 >= 1 && j + 1 <= size - 1) && ptrMaze[i - 1][j + 1] == 0) {	//右上
+			if (VistMaze_8directions(i - 1, j) == 1)
+				return 1;
+		}//當四周都不通的時候將其置回0
+		if (end != 1) {
+			ptrMaze[i][j] = 0;
+		}
+
+		return end;
+	}
+
+
+
 	void Delete() {
 		for (int i = 0; i < size; i++)
 		{
@@ -116,7 +185,7 @@ int main()
 		for (int j = 0; j < size(probability); j++) {
 			Maze maze(mazeSize[i], probability[j]);
 			maze.PrintMaze();
-			cout << mazeSize[i] << "(" << 100 - probability[j] << "%)" << " : " << maze.VistMaze_4directions(1, 1) << endl;
+			cout << mazeSize[i] << "(" << 100 - probability[j] << "%)" << " : " << maze.VistMaze_4directions(1,1) << endl;
 			maze.Delete();
 		}
 	}
