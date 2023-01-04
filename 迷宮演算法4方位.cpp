@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	int VistMaze(int i, int j)
+	int VistMaze_4directions(int i, int j)
 	{
 		int end = 0;
 
@@ -75,19 +75,19 @@ public:
 		}
 		//如果迷宮沒有走結束則將搜尋所在位置的右、下、左、上四個方向是否能夠走通
 		if (end != 1 && j + 1 <= size - 1 && ptrMaze[i][j + 1] == 0) {		//右
-			if (VistMaze(i, j + 1) == 1)
+			if (VistMaze_4directions(i, j + 1) == 1)
 				return 1;
 		}
 		if (end != 1 && i + 1 <= size - 1 && ptrMaze[i + 1][j] == 0) {		//下
-			if (VistMaze(i + 1, j) == 1)
+			if (VistMaze_4directions(i + 1, j) == 1)
 				return 1;
 		}
 		if (end != 1 && j - 1 >= 1 && ptrMaze[i][j - 1] == 0) {	//左
-			if (VistMaze(i, j - 1) == 1)
+			if (VistMaze_4directions(i, j - 1) == 1)
 				return 1;
 		}
 		if (end != 1 && i - 1 >= 1 && ptrMaze[i - 1][j] == 0) {	//上
-			if (VistMaze(i - 1, j) == 1)
+			if (VistMaze_4directions(i - 1, j) == 1)
 				return 1;
 		}	//當四周都不通的時候將其置回0
 		if (end != 1) {
@@ -116,7 +116,7 @@ int main()
 		for (int j = 0; j < size(probability); j++) {
 			Maze maze(mazeSize[i], probability[j]);
 			maze.PrintMaze();
-			cout << mazeSize[i] << "(" << 100 - probability[j] << "%)" << " : " << maze.VistMaze(1, 1) << endl;
+			cout << mazeSize[i] << "(" << 100 - probability[j] << "%)" << " : " << maze.VistMaze_4directions(1, 1) << endl;
 			maze.Delete();
 		}
 	}
